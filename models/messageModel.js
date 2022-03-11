@@ -1,34 +1,30 @@
 const {Schema, model} = require('mongoose');
 
 
-const UserSchema = Schema({
-    username: {
-        type: String,
+const MessageSchema = Schema({
+    from: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required : true,
     },
-    email: {
-        type: String,
-        required : true,
-        unique: true,
-    },
-    password: {
-        type: String,
+    to: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
         required : true,
     },
-    online: {
-        type: Boolean,
-        default: false
+    message: {
+        type: String,
+        required: true,
     }
-});
+}, {timestamps: true});
 
 // para que sólo devuelva lo necesario del model en lugar de todo el modelo
 // como se está usando mongoDB, agrega el __v, _id y no queremos mostrar la password
 // todo lo demás, se almacenará en un object (...object)
-UserSchema.method('toJSON', function(){
-    const {__v, _id, password, ...object } = this.toObject();
-    object.uid = _id;
+MessageSchema.method('toJSON', function(){
+    const {__v, _id, ...object } = this.toObject();
     return object;
 
 });
 // para exportar una clase modelo
-module.exports = model('User', UserSchema);
+module.exports = model('Message', MessageSchema);
